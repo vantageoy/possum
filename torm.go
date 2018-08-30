@@ -127,8 +127,6 @@ func Create(schema string, out interface{}) (string, error) {
 	var uuid pgtype.UUID
 	scope := NewScope(out)
 
-	fmt.Println(scope.CreateSQL())
-
 	err := QueryRow(schema, scope.CreateSQL(), scope.CreateArgs()).Scan(&uuid)
 
 	if err != nil {

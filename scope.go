@@ -2,6 +2,7 @@ package torm
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -15,8 +16,6 @@ type Scope struct {
 	Model Model
 }
 
-type QueryArgs []interface{}
-
 var (
 	CreateFieldFilter = FieldFilter{ExcludePrimary: true}
 	UpdateFieldFilter = FieldFilter{ExcludeCreateTimestamp: true}
@@ -29,6 +28,34 @@ func NewScope(out interface{}) *Scope {
 	scope.Model = scope.GetModel()
 
 	return scope
+
+}
+
+func (s *Scope) StructName() string {
+
+	return s.GetStruct(s.Value).Name()
+
+}
+
+func (s *Scope) GetStruct(model interface{}) reflect.Type {
+
+	modelStruct := reflect.ValueOf(model).Type()
+	for modelStruct.Kind() == reflect.Slice || modelStruct.Kind() == reflect.Ptr {
+		modelStruct = modelStruct.Elem()
+	}
+
+	// Scope value need to be a struct
+	if modelStruct.Kind() != reflect.Struct {
+		panic("Model value was not a struct")
+	}
+
+	return modelStruct
+
+}
+
+func (s *Scope) GetTableName() string {
+
+	return fmt.Sprintf("%ss", ToSnakeCase(s.StructName()))
 
 }
 
@@ -54,10 +81,7 @@ func (s *Scope) CreateSQL() string {
 	columnString := fmt.Sprintf("(%s)", strings.Join(columns, ","))
 	valueString := fmt.Sprintf("VALUES (%s)", strings.Join(colIndexes, ","))
 
-	fmt.Sprintf(columnString)
-	fmt.Sprintf(valueString)
-
-	return fmt.Sprintf("insert into %s %s %s RETURNING id", s.Model.GetTableName(s.Value), columnString, valueString)
+	return fmt.Sprintf("insert into %s %s %s RETURNING id", s.GetTableName(), columnString, valueString)
 
 }
 
@@ -72,16 +96,4 @@ func (s *Scope) FindSQL(where string) string {
 	//columns := fmt.Sprintf("select %s from %s")
 
 	return ""
-}
-
-func (s *Scope) CreateValuesSQL() string {
-
-	var inputs []string
-
-	for index, _ := range s.Model.Fields {
-		inputs = append(inputs, fmt.Sprintf("$%d", index+1))
-	}
-
-	return fmt.Sprintf("values(%s)", strings.Join(inputs, ","))
-
 }
