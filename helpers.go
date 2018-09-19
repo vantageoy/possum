@@ -1,4 +1,4 @@
-package torm
+package possum
 
 import (
 	"fmt"

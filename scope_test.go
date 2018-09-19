@@ -1,14 +1,14 @@
-package torm_test
+package possum_test
 
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/vantageoy/torm"
+	"github.com/vantageoy/possum"
 )
 
 var _ = Describe("Scope", func() {
 
-	var scope = torm.NewScope(&TestModel{})
+	var scope = possum.NewScope(&TestModel{})
 
 	Describe("Scope Model", func() {
 
@@ -64,7 +64,7 @@ var _ = Describe("Scope", func() {
 				Foo0:          11,
 			}
 
-			s := torm.NewScope(&model)
+			s := possum.NewScope(&model)
 
 			// Expect timestamps to be 0, they are generated on insert
 			Expect(s.CreateArgs()[0]).To(Equal(int64(0)))

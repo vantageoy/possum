@@ -1,4 +1,4 @@
-package torm
+package possum
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type Scope struct {
 
 var (
 	CreateFieldFilter = FieldFilter{ExcludePrimary: true}
-	UpdateFieldFilter = FieldFilter{ExcludeCreateTimestamp: true}
+	UpdateFieldFilter = FieldFilter{ExcludePrimary: true, ExcludeCreateTimestamp: true}
 )
 
 func NewScope(out interface{}) *Scope {
@@ -44,7 +44,7 @@ func (s *Scope) GetStruct(model interface{}) reflect.Type {
 		modelStruct = modelStruct.Elem()
 	}
 
-	// Scope value need to be a struct
+	// Scope value needs to be a struct
 	if modelStruct.Kind() != reflect.Struct {
 		panic("Model value was not a struct")
 	}
@@ -61,7 +61,7 @@ func (s *Scope) GetTableName() string {
 
 func (s *Scope) CreateSQL() string {
 
-	unix := time.Now().Unix()
+	unix := timestamp()
 
 	if err := s.Model.SetCreateTimestamp(unix); err != nil {
 		panic(err)
@@ -71,12 +71,8 @@ func (s *Scope) CreateSQL() string {
 		panic(err)
 	}
 
-	var colIndexes []string
 	columns := s.Model.Columns(CreateFieldFilter)
-
-	for i := range columns {
-		colIndexes = append(colIndexes, fmt.Sprintf("$%s", strconv.Itoa(i+1)))
-	}
+	colIndexes := s.ColumnIndexes(columns)
 
 	columnString := fmt.Sprintf("(%s)", strings.Join(columns, ","))
 	valueString := fmt.Sprintf("VALUES (%s)", strings.Join(colIndexes, ","))
@@ -91,9 +87,20 @@ func (s *Scope) CreateArgs() pgx.QueryArgs {
 
 }
 
-func (s *Scope) FindSQL(where string) string {
+func (s *Scope) ColumnIndexes(columns []string) (indexes []string) {
 
-	//columns := fmt.Sprintf("select %s from %s")
+	var colIndexes []string
 
-	return ""
+	for i := range columns {
+		colIndexes = append(colIndexes, fmt.Sprintf("$%s", strconv.Itoa(i+1)))
+	}
+
+	return colIndexes
+
+}
+
+func timestamp() int64 {
+
+	return time.Now().Unix()
+
 }

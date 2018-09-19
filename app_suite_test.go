@@ -1,4 +1,4 @@
-package torm_test
+package possum_test
 
 import (
 	"testing"
@@ -9,9 +9,9 @@ import (
 )
 
 type TestModel struct {
-	ID            pgtype.UUID `torm:"primary_key"`
-	Foo           int64       `torm:"create_timestamp"`
-	Bar           int64       `torm:"update_timestamp"`
+	ID            pgtype.UUID `possum:"primary_key"`
+	Foo           int64       `possum:"create_timestamp"`
+	Bar           int64       `possum:"update_timestamp"`
 	MyField       string
 	Another_Field string
 	Foo0          int
@@ -19,5 +19,5 @@ type TestModel struct {
 
 func TestScope(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Torm Test Suite")
+	RunSpecs(t, "possum Test Suite")
 }

@@ -1,4 +1,4 @@
-package torm
+package possum
 
 import (
 	"errors"
@@ -134,16 +134,5 @@ func Create(schema string, out interface{}) (string, error) {
 	}
 
 	return EncodeUUID(uuid.Bytes), nil
-
-}
-
-func Find(schema string, query string, out interface{}) ([]interface{}, error) {
-
-	//var uuid pgtype.UUID
-	//scope := NewScope(out)
-
-	//rows, err := Query(schema, scope.FindSQL(query), pgx.QueryArgs{})
-	//
-	return nil, nil
 
 }

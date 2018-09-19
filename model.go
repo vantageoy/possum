@@ -1,4 +1,4 @@
-package torm
+package possum
 
 import (
 	"go/ast"
@@ -44,7 +44,7 @@ func (s *Scope) GetModel() Model {
 				DBName: ToSnakeCase(fieldStruct.Name),
 				Type:   model.Type.Field(i),
 				Value:  modelValue.Field(i),
-				Tag:    fieldStruct.Tag.Get("torm"),
+				Tag:    fieldStruct.Tag.Get("possum"),
 			}
 
 			if field.HasPrimaryTag() {

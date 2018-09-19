@@ -1,16 +1,16 @@
-package torm_test
+package possum_test
 
 import (
 	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/vantageoy/torm"
+	"github.com/vantageoy/possum"
 )
 
 var _ = Describe("Model", func() {
 
-	var model = torm.NewScope(&TestModel{}).Model
+	var model = possum.NewScope(&TestModel{}).Model
 
 	Describe("Model timestamps", func() {
 
