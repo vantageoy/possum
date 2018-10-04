@@ -90,6 +90,30 @@ func GetConnectionForSchema(schema string) (*pgx.ConnPool, *pgx.Conn) {
 
 }
 
+func Exec(command string) {
+
+	pool, err := GetConnPool()
+
+	if err != nil {
+		panic(err)
+	}
+
+	conn, err := pool.Acquire()
+
+	defer pool.Release(conn)
+
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = conn.Exec(command)
+
+	if err != nil {
+		panic(err)
+	}
+
+}
+
 func Stat() pgx.ConnPoolStat {
 
 	pool, err := GetConnPool()

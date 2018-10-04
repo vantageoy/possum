@@ -13,6 +13,7 @@ var (
 	CreateTimestampTagName = "create_timestamp"
 	// UpdateTimestampTagName specifies if the field should be used to store timestamp when the parent model is updated.
 	UpdateTimestampTagName = "update_timestamp"
+	NullStringTagName      = "null_string"
 )
 
 type Field struct {
@@ -64,6 +65,11 @@ func (f *Field) RealValue() interface{} {
 	switch value.Kind() {
 
 	case reflect.String:
+
+		if len(value.String()) == 0 && f.HasNullStringTag() {
+			return nil
+		}
+
 		return value.String()
 
 	case reflect.Int:
@@ -80,6 +86,9 @@ func (f *Field) RealValue() interface{} {
 
 	case reflect.Int64:
 		return value.Int()
+
+	case reflect.Float64:
+		return value.Float()
 
 	}
 
@@ -113,4 +122,8 @@ func (f *Field) HasCreateTimestampTag() bool {
 
 	return f.HasTag(CreateTimestampTagName)
 
+}
+
+func (f *Field) HasNullStringTag() bool {
+	return f.HasTag(NullStringTagName)
 }
